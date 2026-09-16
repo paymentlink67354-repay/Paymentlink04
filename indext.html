@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Gateway</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.4); }
+            70% { box-shadow: 0 0 0 8px rgba(37, 99, 235, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0); }
+        }
+        .btn-pulse { animation: pulseGlow 2s infinite; }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans min-h-screen flex justify-center items-center p-3 sm:p-4 text-slate-800">
+
+    <!-- EDIT THESE 3 VALUES -->
+    <script>
+        const CUSTOMER_NAME = "Asha Jahan";
+        const LOAN_PRODUCT = "My loan";
+        const UPI_ID = "Sharifs";
+        const AMOUNT = "9000";
+    </script>
+
+    <div class="bg-white w-full max-w-md rounded-3xl shadow-xl overflow-hidden border border-slate-200 relative">
+        
+        <div class="bg-slate-50/80 backdrop-blur px-5 py-3 flex items-center justify-between border-b border-slate-100">
+            <div class="flex items-center space-x-2 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1">
+                <i class="fa-solid fa-shield-halved text-emerald-600 text-xs"></i>
+                <span class="text-xs text-emerald-800 font-semibold tracking-wide uppercase">Secure Gateway</span>
+            </div>
+            <button onclick="window.location.reload()" title="Refresh" class="text-slate-400 hover:text-slate-600 transition-colors p-1">
+                <i class="fa-solid fa-rotate-right text-sm"></i>
+            </button>
+        </div>
+
+        <div class="bg-gradient-to-r from-blue-600 to-indigo-600 text-white text-center py-5 shadow-inner">
+            <h1 class="text-xl font-bold tracking-wide">Payment Gateway</h1>
+            <p class="text-xs text-blue-100 mt-0.5 opacity-90">Instant & Safe Processing</p>
+        </div>
+
+        <div class="p-6 space-y-6">
+            
+            <div class="flex justify-between items-center bg-amber-50/60 border border-amber-200/60 rounded-2xl px-4 py-3">
+                <div class="flex items-center space-x-2">
+                    <i class="fa-regular fa-clock text-amber-600 text-sm animate-pulse"></i>
+                    <span class="text-slate-700 font-medium text-xs sm:text-sm">Order will be close in:</span>
+                </div>
+                <span id="timer" class="bg-white text-amber-700 font-extrabold px-3 py-1 rounded-xl text-sm shadow-sm border border-amber-100">04:46</span>
+            </div>
+
+            <div class="bg-slate-50/70 rounded-2xl p-4 border border-slate-200/80 space-y-2.5">
+                <div class="flex justify-between items-center text-sm">
+                    <span class="text-slate-500 font-medium">Customer Name</span>
+                    <span id="customer-name" class="text-slate-800 font-bold bg-white px-2.5 py-0.5 rounded-lg border border-slate-200 text-xs sm:text-sm"></span>
+                </div>
+                <div class="flex justify-between items-center text-sm border-t border-slate-200/60 pt-2.5">
+                    <span class="text-slate-500 font-medium">Loan Name</span>
+                    <span id="loan-name" class="text-slate-800 font-bold"></span>
+                </div>
+            </div>
+
+            <div class="bg-gradient-to-r from-slate-900 to-slate-800 text-white p-4 rounded-2xl flex justify-between items-center shadow-md">
+                <span class="text-slate-300 text-sm font-medium">Total Payable Amount</span>
+                <span class="text-2xl font-black text-emerald-400">₹ <span id="amount-display"></span></span>
+            </div>
+
+            <div class="space-y-1.5">
+                <label class="text-slate-600 text-xs font-bold uppercase tracking-wider block">Payable UPI ID</label>
+                <div class="flex space-x-2">
+                    <div class="relative w-full">
+                        <input type="text" id="vpa-id" readonly class="bg-slate-50 border border-slate-300 rounded-xl px-4 py-3 text-sm font-semibold text-slate-800 w-full focus:outline-none focus:ring-2 focus:ring-blue-500/20 select-all">
+                    </div>
+                    <button onclick="copyVPA()" class="bg-blue-600 hover:bg-blue-700 active:scale-95 text-white font-bold px-5 py-3 rounded-xl text-sm transition-all shadow-md shadow-blue-500/20 btn-pulse flex items-center space-x-1 whitespace-nowrap">
+                        <i class="fa-regular fa-copy text-xs"></i>
+                        <span>Copy</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="space-y-2">
+                <span class="text-slate-600 text-xs font-bold uppercase tracking-wider block">Pay with any UPI App</span>
+                <div class="grid grid-cols-2 gap-3">
+                    <a id="paytm-link" href="#" class="border border-slate-200 hover:border-sky-400 rounded-2xl p-3 flex items-center justify-center h-14 bg-white hover:bg-sky-50/30 transition-all shadow-sm group">
+                        <span class="text-sky-600 font-extrabold text-base group-hover:scale-105 transition-transform">pay<span class="text-cyan-500">tm</span></span>
+                    </a>
+                    <a id="phonepe-link" href="#" class="border border-slate-200 hover:border-indigo-400 rounded-2xl p-3 flex items-center justify-center h-14 bg-white hover:bg-indigo-50/30 transition-all shadow-sm group">
+                        <span class="text-indigo-700 font-extrabold text-base group-hover:scale-105 transition-transform">Phone<span class="text-purple-600">Pe</span></span>
+                    </a>
+                    <a id="gpay-link" href="#" class="border border-slate-200 hover:border-slate-400 rounded-2xl p-3 flex items-center justify-center h-14 bg-white hover:bg-slate-50 transition-all shadow-sm group">
+                        <span class="text-slate-700 font-bold text-base group-hover:scale-105 transition-transform"><span class="text-blue-500">G</span> Pay</span>
+                    </a>
+                    <a id="other-link" href="#" class="border border-slate-200 hover:border-emerald-400 rounded-2xl p-3 flex items-center justify-center h-14 bg-white hover:bg-emerald-50/30 transition-all shadow-sm group">
+                        <span class="text-emerald-600 font-black italic tracking-wider text-base group-hover:scale-105 transition-transform">OTHER UPI</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="space-y-2 pt-2 border-t border-slate-100">
+                <label for="utr-input" class="text-slate-700 font-bold text-xs flex items-center space-x-1.5">
+                    <i class="fa-solid fa-file-invoice text-blue-600"></i>
+                    <span>Fill UTR / Reference Number after payment</span>
+                </label>
+                <input type="text" id="utr-input" placeholder="e.g. 3241XXXXXX12" class="w-full border border-slate-300 rounded-xl px-4 py-3 text-sm focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all">
+                <p id="utr-error" class="text-rose-500 text-xs hidden">Please enter a valid UTR number before submitting.</p>
+            </div>
+
+            <button id="submitBtn" onclick="submitUTR()" class="w-full bg-blue-600 hover:bg-blue-700 active:scale-[0.99] text-white font-bold py-3.5 rounded-xl text-base transition-all shadow-lg shadow-blue-600/25 flex items-center justify-center space-x-2">
+                <span>Submit Payment UTR</span>
+                <i class="fa-solid fa-arrow-right text-xs"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="customModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm hidden flex justify-center items-center p-4 z-50">
+        <div class="bg-white w-full max-w-sm rounded-3xl p-6 flex flex-col items-center text-center shadow-2xl transition-all">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center shadow-inner mb-4">
+                <i class="fa-solid fa-check text-2xl"></i>
+            </div>
+            <h3 class="text-slate-900 font-bold text-xl mb-2">Payment Successful</h3>
+            <p class="text-slate-500 text-sm font-medium leading-relaxed mb-6">Payment successful. Thank you!</p>
+            <button onclick="closeModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-xl text-sm transition-colors">OK</button>
+        </div>
+    </div>
+
+    <div id="copyToast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900/90 backdrop-blur text-white px-5 py-2.5 rounded-full text-xs font-semibold shadow-xl transition-all duration-300 opacity-0 pointer-events-none z-50 flex items-center space-x-2">
+        <i class="fa-solid fa-circle-check text-emerald-400"></i>
+        <span>UPI ID copied to clipboard!</span>
+    </div>
+
+    <script>
+        // Apply editable values
+        document.getElementById('customer-name').textContent = CUSTOMER_NAME;
+        document.getElementById('loan-name').textContent = LOAN_PRODUCT;
+        document.getElementById('vpa-id').value = UPI_ID;
+        document.getElementById('amount-display').textContent = Number(AMOUNT).toLocaleString('en-IN');
+
+        const upiLink = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent(LOAN_PRODUCT)}&am=${AMOUNT}&cu=INR`;
+        document.getElementById('paytm-link').href = upiLink;
+        document.getElementById('phonepe-link').href = upiLink;
+        document.getElementById('gpay-link').href = upiLink;
+        document.getElementById('other-link').href = upiLink;
+
+        function copyVPA() {
+            navigator.clipboard.writeText(document.getElementById('vpa-id').value).then(showToast);
+        }
+
+        function showToast() {
+            const toast = document.getElementById('copyToast');
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
+
+        function submitUTR() {
+            const utrInput = document.getElementById('utr-input');
+            const utrError = document.getElementById('utr-error');
+            const btn = document.getElementById('submitBtn');
+            
+            if (!utrInput.value.trim()) {
+                utrError.classList.remove('hidden');
+                utrInput.classList.add('border-rose-500');
+                return;
+            }
+
+            utrError.classList.add('hidden');
+            utrInput.classList.remove('border-rose-500');
+            btn.disabled = true;
+            btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin text-sm"></i> <span>Processing...</span>`;
+            btn.classList.add('opacity-80', 'cursor-not-allowed');
+
+            setTimeout(() => {
+                document.getElementById('customModal').classList.remove('hidden');
+                btn.innerHTML = `<i class="fa-solid fa-check"></i> <span>Submitted</span>`;
+                btn.classList.remove('bg-blue-600', 'hover:bg-blue-700', 'shadow-blue-600/25', 'opacity-80');
+                btn.classList.add('bg-emerald-600');
+            }, 1500);
+        }
+
+        function closeModal() {
+            document.getElementById('customModal').classList.add('hidden');
+        }
+
+        let time = 286;
+        const timerElement = document.getElementById('timer');
+        setInterval(() => {
+            if (time <= 0) {
+                timerElement.textContent = "00:00";
+                timerElement.classList.add('text-rose-600');
+                return;
+            }
+            time--;
+            let m = Math.floor(time / 60);
+            let s = time % 60;
+            timerElement.textContent = `${m.toString().padStart(2,'0')}:${s.toString().padStart(2,'0')}`;
+        }, 1000);
+    </script>
+</body>
+</html>
